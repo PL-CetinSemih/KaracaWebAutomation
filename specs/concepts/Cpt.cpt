@@ -1,5 +1,4 @@
 # Search product and add to basket
-* Click to element "spccaccept"
 * Write value "mouse" to element "twotabsearchtextbox"
 * Click to element "navsearchsubmitbutton"
 * Click to element "firstmouse"
@@ -18,4 +17,4 @@
 
 # delete product and check
 * Click to element "delete"
-* check "checkemptybasket" element is exist
+* "1navsearchsubmitbutton" elementini kontrol et yoksa "checkemptybasket" devam et

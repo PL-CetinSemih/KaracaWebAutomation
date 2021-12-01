@@ -11,8 +11,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -195,9 +200,21 @@ public class BaseSteps extends BaseTest {
     }
 
 
-    @Step({"<key> elementini kontrol et","check <key> element is exist"})
+    @Step({"<key> elementini kontrol et", "check <key> element is exist"})
     public void checkElement(String key) {
         assertTrue(findElement(key).isDisplayed(), "Aranan element bulunamadı");
+    }
+
+    @Step("<key> elementini kontrol et yoksa <key2> devam et")
+    public void checkElementAndContinue(String key, String key2) {
+        logger.info("checkElementAndContinue");
+        try {
+            findElement(key).click();
+        } catch (Exception e) {
+            logger.info("Catch");
+            assertTrue(findElement(key2).isDisplayed(), "Aranan element bulunamadı");
+        }
+
     }
 
     @Step({"Go to <url> address",
@@ -440,6 +457,29 @@ public class BaseSteps extends BaseTest {
             "<key> elementinin text alanını temizle"})
     public void clearInputArea(String key) {
         findElement(key).clear();
+    }
+
+    @Step("<text> pathi hafızada tut")
+    public void keepPathInMemory(String text) {
+        StringSelection stringSelection = new StringSelection(text);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }
+
+    @Step("Yapıştır ve gönder")
+    public void pasteAndSendEnter() {
+        try {
+            Robot robot = new Robot();
+            robot.keyPress(KeyEvent.VK_CONTROL);
+            robot.keyPress(KeyEvent.VK_V);
+            robot.keyRelease(KeyEvent.VK_V);
+            robot.keyRelease(KeyEvent.VK_CONTROL);
+            robot.keyPress(KeyEvent.VK_ENTER);
+            robot.keyRelease(KeyEvent.VK_ENTER);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Step({"Clear text of element <key> with BACKSPACE",
@@ -687,7 +727,6 @@ public class BaseSteps extends BaseTest {
     }
 
 
-
     @Step("<key> elementine javascript ile tıkla")
     public void clickToElementWithJavaScript(String key) {
         WebElement element = findElement(key);
@@ -744,10 +783,10 @@ public class BaseSteps extends BaseTest {
         try {
             TimeUnit.SECONDS.sleep(3);
 
-        List<WebElement> anchors = findElements(key);
-        WebElement anchor = anchors.get(Integer.parseInt(index));
-        anchor.click();
-        TimeUnit.SECONDS.sleep(2);
+            List<WebElement> anchors = findElements(key);
+            WebElement anchor = anchors.get(Integer.parseInt(index));
+            anchor.click();
+            TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
